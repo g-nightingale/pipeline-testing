@@ -2,14 +2,6 @@ import pytest
 import pandas as pd
 from preprocessing import DropNonNumericFeatures
 
-@pytest.fixture
-def input_data():
-    df = pd.DataFrame({
-                        'col1': [1, 0],
-                        'col2': ['a', 'b'],
-                        'col3': [0, 1]
-                    })
-    return df
 
 def test_drop_non_numeric_features(input_data):
     """Test function drops non-numeric features."""

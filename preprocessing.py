@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-
+from sklearn.metrics import roc_auc_score
 
 class DropNonNumericFeatures(BaseEstimator, TransformerMixin):
     """
@@ -23,7 +23,7 @@ class DropNonNumericFeatures(BaseEstimator, TransformerMixin):
         """
         Drop the non-numeric features in a DataFrame.
         """
-        
+
         print(f'features to drop: {self.non_numeric_features}')
         X = X.copy()
         X.drop(self.non_numeric_features, axis=1, inplace=True)
