@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.metrics import roc_auc_score
+from config import *
+
 
 class DropNonNumericFeatures(BaseEstimator, TransformerMixin):
     """
@@ -108,4 +110,44 @@ class DropFeatures(BaseEstimator, TransformerMixin):
         X.drop(self.drop_features, axis=1, inplace=True)
         return X 
 
+class ConvertCategoricalToOrdinal(BaseEstimator, TransformerMixin):
+    """
+    Convert categorical variables to ordinal.
+    """
 
+    def __init__(self, max_cardinality=100):
+        self.mappings = {}
+        self.max_cardinality = max_cardinality
+
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
+        """
+        Find categorical variables and create ordinal mappings.
+        """
+        X = X.copy()
+        X['_target'] = y
+
+        mappings = {}
+        non_numeric_features = X.select_dtypes(exclude=np.number)
+        for feature in non_numeric_features:
+                feature_mappings = {}
+                if X[feature].value_counts().count() > self.max_cardinality:
+                        continue
+                else:
+                        target_rate_by_feature_value = X.groupby([feature]).agg({'_target':'mean'})
+                        target_rate_by_feature_value.sort_values('_target', inplace=True)
+                        for i, feature_value in enumerate(target_rate_by_feature_value.index.values):
+                                feature_mappings[feature_value] = i
+                mappings[feature] = feature_mappings
+        self.mappings = mappings
+
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transform features using the learned mappings.
+        """
+
+        X = X.copy()
+        for feature in self.mappings.keys():
+            X[feature] = X[feature].map(self.mappings[feature])
+        return X

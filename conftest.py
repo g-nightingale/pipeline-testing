@@ -19,3 +19,12 @@ def input_data_with_missing_values():
                         'col3': [0, np.nan, 4]
                     })
     return df
+
+@pytest.fixture
+def input_data_categorical_with_target():
+    df = pd.DataFrame({
+                        'col1': ['a', 'b', 'c'],
+                        'col2': [1, 0, 1],
+                        'col3': [2, 1, 3]
+                    })
+    return df
