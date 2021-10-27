@@ -24,7 +24,6 @@ class DropNonNumericFeatures(BaseEstimator, TransformerMixin):
         Drop the non-numeric features in a DataFrame.
         """
 
-        print(f'features to drop: {self.non_numeric_features}')
         X = X.copy()
         X.drop(self.non_numeric_features, axis=1, inplace=True)
         return X
@@ -49,7 +48,64 @@ class ReplaceMissingValues(BaseEstimator, TransformerMixin):
         Replace missing values with the replacement value.
         """
 
-        print(f'missing values will be replaced with: {self.replacement_value}')
         X = X.copy()
         X.fillna(self.replacement_value, inplace=True)
         return X
+
+class MeanImputer(BaseEstimator, TransformerMixin):
+    """
+    Impute missing values with the mean.
+    """
+
+    def __init__(self):
+        self.mean_values = None
+
+    def fit(self, X: pd.DataFrame, y: pd.Series = None) -> None:
+        """
+        Find the mean values for each feature in the DataFrame.
+        """
+
+        mean_values_dict = {}
+        # Only calculate the means for numeric features
+        numeric_features = X.select_dtypes(np.number).columns
+        for col in numeric_features:
+            mean_values_dict[col] = X[col].mean()
+        self.mean_values = mean_values_dict
+
+        return self
+        
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Replace missing values with the mean of the feature.
+        """
+
+        X = X.copy()
+        for col in self.mean_values.keys():
+            X[col].replace(np.nan, self.mean_values[col], inplace=True)
+        return X
+
+class DropFeatures(BaseEstimator, TransformerMixin):
+    """
+    Drop features specified by the user.
+    """
+
+    def __init__(self, drop_features=[]):
+        self.drop_features = drop_features
+
+    def fit(self, X: pd.DataFrame, y: pd.Series = None) -> None:
+        """
+        Don't need to anything.
+        """
+
+        return self
+        
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Drop the features.
+        """
+
+        X = X.copy()
+        X.drop(self.drop_features, axis=1, inplace=True)
+        return X 
+
+

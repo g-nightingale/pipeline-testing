@@ -1,17 +1,21 @@
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
-from config import REPLACE_MISSING_VALUE
+from config import REPLACE_MISSING_VALUE, DROP_FEATURES
 import preprocessing as pp
 
 loan_pipe = Pipeline(
     [
         (
+            "drop_user_specified_features",
+            pp.DropFeatures(drop_features=DROP_FEATURES),
+        ),
+        (
             "drop_non_numeric_features",
             pp.DropNonNumericFeatures(),
         ),
         (
-            "replace_missing_values",
-            pp.ReplaceMissingValues(replacement_value=REPLACE_MISSING_VALUE),
+            "mean_imputation",
+            pp.MeanImputer(),
         ),
         (
             "gb_model",
