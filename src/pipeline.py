@@ -1,7 +1,10 @@
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
-from config import REPLACE_MISSING_VALUE, DROP_FEATURES, MAX_CARDINALITY
-import preprocessing as pp
+from config import DROP_FEATURES, MAX_CARDINALITY
+import os, sys
+sys.path.insert(1, os.getcwd())
+import src.processing.preprocessing as pp
+
 
 class SklearnPipeline:
     """Class to construct an Sklearn pipeline."""

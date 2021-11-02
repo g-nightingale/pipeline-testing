@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.metrics import roc_auc_score
-from config import *
+import os, sys
+sys.path.insert(1, os.getcwd())
+from src.config import *
 
 
 class DropNonNumericFeatures(BaseEstimator, TransformerMixin):
